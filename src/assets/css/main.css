@@ -74,8 +74,8 @@ div#preview {
 
 div#preview > div {
   display: inline-block;
-  vertical-align: top;
-  width: calc(50% - 12px);
+  /* vertical-align: top; */
+  /* width: calc(50% - 12px); */
 }
 
 section#statistics div {
@@ -109,11 +109,11 @@ section {
 }
 
 .video {
-  background: #222;
+  /* background: #222; */
   margin: 0 0 0 0;
-  --width: 100%;
-  width: var(--width);
-  height: 525px;
+  /* --width: 100%; */
+  /* width: var(--width);
+  height: 525px; */
 }
 /* canvas{
   background: #222;

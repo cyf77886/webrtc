@@ -34,13 +34,12 @@
             text-align: center;
           "
         />
-        
       </div>
 
       <div id="preview">
         <div>
           <h2>Remote:</h2>
-          <video class="video" id="remotevideo"  autoplay  controls playsinline></video>
+          <video class="video" id="remotevideo" autoplay playsinline></video>
           <h2 style="display: none">Answer SDP:</h2>
           <textarea
             id="answer"
@@ -48,15 +47,16 @@
             :value="answer"
           ></textarea>
         </div>
-        <div >
+        <div>
           <h2>Local:</h2>
-          <video
+          <!-- <video
             id="localvideo"
-            autoplay
-            controls
             playsinline
             muted
-          ></video>
+          ></video> -->
+          <div class="box1">
+            <video id="video" width="400" height="300"  playsinline loop></video>
+          </div>
           <h2 style="display: none">Offer SDP:</h2>
           <textarea id="offer" style="display: none" :value="offer"></textarea>
         </div>
@@ -91,14 +91,14 @@
       <a id="download"></a>
       <span id="status"></span>
       <div class="preview">
-        <!-- <div class="grape-container" id="bitrateGraph">
+        <div class="grape-container" id="bitrateGraph">
           <div>Bitrate</div>
           <canvas id="bitrateCanvas"></canvas>
         </div>
         <div class="grape-container" id="packetGraph">
           <div>Packets sent pet second</div>
           <canvas id="packetCanvas"></canvas>
-        </div> -->
+        </div>
       </div>
       <div>
         <h2>Chat:</h2>
@@ -123,22 +123,23 @@ import {
 } from "../assets/js/third_party/graph";
 import "../assets/css/main.css";
 // import * as faceapi from "face-api.js";
-import clm from 'clmtrackr'
+import clm from "clmtrackr";
+
 export default {
   name: "MyIndex",
   data() {
     return {
-      // //人脸检测
-      // video: '',
-      // canvas: '',
-      // ctx: '',
-      // ctracker: '',
-      // // 画图
-      // lastReult: null,
-      // bitrateGraph: null,
-      // bitrateSeries: null,
-      // packetGraph: null,
-      // packetSeries: null,
+      //人脸检测
+      video: "",
+      canvas: "",
+      ctx: "",
+      ctracker: "",
+      // 画图
+      lastReult: null,
+      bitrateGraph: null,
+      bitrateSeries: null,
+      packetGraph: null,
+      packetSeries: null,
       // 发送消息
       allMess: "",
       myMess: "",
@@ -179,18 +180,18 @@ export default {
       offerdesc: null,
       constraints: {},
       count: 0,
+      count1: 0,
+      lastReult1: null,
     };
   },
   mounted() {
-     this.localvideo = document.getElementById("localvideo");
-    // this.initVideo()
     this.$axios.get('http://101.69.255.131:9000/slogin').then(res=>{
       console.log(res.data);
     })
-      
+    this.localvideo = document.getElementById("localvideo");
+    this.video = document.getElementById("video");
   },
   created() {
-
     const bitrateDiv = document.querySelector("div#bitrate");
     const fileInput = document.querySelector("input#fileInput");
 
@@ -211,16 +212,16 @@ export default {
   },
 
   methods: {
-     initVideo() {
-//       this.video = document.getElementById('video');
-//       this.canvas = document.getElementById('canvas');
-//       // console.log(this.video)
-//       // console.log(this.canvas)
-//       this.ctx = canvas.getContext('2d');   //参数 contextID 指定了您想要在画布上绘制的类型。当前唯一的合法值是 "2d"
-//       var width = video.width;  
-//       var height = video.height;  
-//       this.canvas.width = width;  
-//       this.canvas.height = height;
+    initVideo() {
+      this.video = document.getElementById("video");
+      //       this.canvas = document.getElementById('canvas');
+      //       console.log(this.video)
+      //       console.log(this.canvas)
+      //       this.ctx = canvas.getContext('2d');   //参数 contextID 指定了您想要在画布上绘制的类型。当前唯一的合法值是 "2d"
+      //       var width = video.width;
+      //       var height = video.height;
+      //       this.canvas.width = width;
+      //       this.canvas.height = height;
     },
     //如果返回的是false说明当前操作系统是手机端，如果返回的是true则说明当前的操作系统是电脑端
     IsPC() {
@@ -318,42 +319,41 @@ export default {
     },
     //socket连接与设置监听动作 不同动作的逻辑
     conn() {
-      // 画布
-
-      // this.bitrateSeries = new TimelineDataSeries();
-      // this.bitrateGraph = new TimelineGraphView(
-      //   "bitrateGraph",
-      //   "bitrateCanvas"
-      // );
-      // // this.bitrateGraph.updateEndDate();
-      // this.packetSeries = new TimelineDataSeries();
-      // this.packetGraph = new TimelineGraphView("packetGraph", "packetCanvas");
-      // this.packetGraph.updateEndDate;
-      // window.setInterval(() => {
-      //   if (this.pc) {
-      //     // sender 视频或一百平
-      //     if (this.isShareDesk) {
-      //       var sender = this.pc.getSenders()[0];
-      //     } else {
-      //       var sender = this.pc.getSenders()[1];
-      //     }
-      //     if (!sender) {
-      //       return;
-      //     }
-      //     // console.log(sender.getStats());
-      //     sender
-      //       .getStats()
-      //       .then((reports) => {
-      //         this.getState(reports).then(() => {
-      //           this.lastReult = reports;
-      //         });
-      //       })
-      //       .catch((err) => {
-      //         console.log(err);
-      //       });
-      //   }
-      // });
-      // alert('xx')
+      //画布
+      this.bitrateSeries = new TimelineDataSeries();
+      this.bitrateGraph = new TimelineGraphView(
+        "bitrateGraph",
+        "bitrateCanvas"
+      );
+      // this.bitrateGraph.updateEndDate();
+      this.packetSeries = new TimelineDataSeries();
+      this.packetGraph = new TimelineGraphView("packetGraph", "packetCanvas");
+      this.packetGraph.updateEndDate;
+      window.setInterval(() => {
+        if (this.pc) {
+          // sender 视频或一百平
+          if (this.isShareDesk) {
+            var sender = this.pc.getSenders()[0];
+          } else {
+            var sender = this.pc.getSenders()[1];
+          }
+          if (!sender) {
+            return;
+          }
+          // console.log(sender.getStats());
+          sender
+            .getStats()
+            .then((reports) => {
+              this.getState(reports).then(() => {
+                this.lastReult = reports;
+                this.lastReult1 = reports;
+              });
+            })
+            .catch((err) => {
+              console.log(err);
+            });
+        }
+      });
       this.socket = this.$socketIO(this.socketApi);
       // alert(this.socket);
       this.socket.on("joined", (roomid, id) => {
@@ -442,9 +442,7 @@ export default {
 
         if (data.hasOwnProperty("type") && data.type === "offer") {
           this.offer = data.sdp;
-
           this.pc.setRemoteDescription(new RTCSessionDescription(data));
-
           //create answer
           this.pc
             .createAnswer()
@@ -484,51 +482,79 @@ export default {
     //开启本地视频
     connSignalServer() {
       this.start();
-      return true;
+      // return true;
     },
     //异步哦获取视音频的信息
-    getState(reports) {
-      return new Promise((resolve, reject) => {
-        reports.forEach((report) => {
-          console.log(report.type);
-          if (report.type === "outbound-rtp") {
-            // 远端
-            // console.log(report.framesPerSecond);
-            this.count++;
-            if (report.isRemote) {
-              return;
-            }
-            if (this.count === 5) {
-              // console.log(this.count);
-              this.count = 0;
-              var curTs = report.timestamp;
-              var bytes = report.bytesSent;
-              var packets = report.packetsSent;
-              if (this.lastReult && this.lastReult.has(report.id)) {
-                var bitrate =
-                  (1000 *
-                    (8 * (bytes - this.lastReult.get(report.id).bytesSent))) /
-                  (curTs - this.lastReult.get(report.id).timestamp);
+    // getState(reports) {
+    //   return new Promise((resolve, reject) => {
+    //     reports.forEach((report) => {
+    //       // console.log(report);
 
-                this.bitrateSeries.addPoint(curTs, bitrate);
-                this.bitrateGraph.setDataSeries([this.bitrateSeries]);
-                this.bitrateGraph.updateEndDate();
-                // console.log(curTs - this.lastReult.get(report.id).timestamp);
-                this.packetSeries.addPoint(
-                  curTs,
-                  packets - this.lastReult.get(report.id).packetsSent
-                );
-                this.packetGraph.setDataSeries([this.packetSeries]);
-                this.packetGraph.updateEndDate();
-                resolve("ok");
-              } else {
-                this.lastReult = reports;
-              }
-            }
-          }
-        });
-      });
-    },
+    //       if (report.type === "transport") {
+    //         this.count1++;
+    //         if (this.count1 === 100) {
+    //           var curTs = report.timestamp;
+    //           var bytes = report.bytesSent;
+    //           var byter = report.bytesReceived;
+    //           this.count1 = 0;
+    //           if (this.lastReult1 && this.lastReult1.has(report.id)) {
+    //             // console.log(this.lastReult1.get(report.id));
+    //             var bitrate =
+    //               (1000 *
+    //                 (8 * (bytes - this.lastReult1.get(report.id).bytesSent))) /
+    //               (curTs - this.lastReult1.get(report.id).timestamp);
+    //             var re =
+    //               (1000 *
+    //                 (8 *
+    //                   (byter - this.lastReult1.get(report.id).bytesReceived))) /
+    //               (curTs - this.lastReult1.get(report.id).timestamp);
+    //             // console.log("发送" + bitrate);
+    //             // console.log("接收" + re);
+    //           } else {
+    //             this.lastReult = reports;
+    //             this.lastReult1 = reports;
+    //           }
+    //         }
+    //       }
+    //       if (report.type === "outbound-rtp") {
+    //         // 远端
+    //         // console.log(report.framesPerSecond);
+    //         this.count++;
+    //         if (report.isRemote) {
+    //           return;
+    //         }
+    //         if (this.count === 100) {
+    //           // console.log(this.count);
+    //           this.count = 0;
+    //           var curTs = report.timestamp;
+    //           var bytes = report.bytesSent;
+    //           var packets = report.packetsSent;
+    //           if (this.lastReult && this.lastReult.has(report.id)) {
+    //             // console.log(this.lastReult.get(report.id));
+    //             var bitrate =
+    //               (1000 *
+    //                 (8 * (bytes - this.lastReult.get(report.id).bytesSent))) /
+    //               (curTs - this.lastReult.get(report.id).timestamp);
+    //             // console.log(bitrate);
+    //             this.bitrateSeries.addPoint(curTs, bitrate);
+    //             this.bitrateGraph.setDataSeries([this.bitrateSeries]);
+    //             this.bitrateGraph.updateEndDate();
+    //             // console.log(bytes - this.lastReult.get(report.id).bytesSent);
+    //             this.packetSeries.addPoint(
+    //               curTs,
+    //               packets - this.lastReult.get(report.id).packetsSent
+    //             );
+    //             this.packetGraph.setDataSeries([this.packetSeries]);
+    //             this.packetGraph.updateEndDate();
+    //             resolve("ok");
+    //           } else {
+    //             this.lastReult = reports;
+    //           }
+    //         }
+    //       }
+    //     });
+    //   });
+    // },
     // 获取视频流
     getMediaStream(stream) {
       // this.localVideo = document.getElementById("localvideo");
@@ -538,33 +564,32 @@ export default {
           stream.removeTrack(track);
         });
       } else {
-        window.stream = stream; // 使流对浏览器控制台可用
-        this.localvideo.srcObject = stream;
+        // window.stream = stream; // 使流对浏览器控制台可用
+        // this.localvideo.srcObject = stream;
         this.localStream = stream;
-        // console.log(this.video);
-        // this.video.srcObject = stream;
-        // video.play()
+        this.video.srcObject = stream;
+        video.play();
         // const _this = this
-      // var ctracker = new clm.tracker();
-      // this.ctracker = ctracker
-      // ctracker.init();
-      // ctracker.start(this.video);
-      // console.log('ctrackr');
-      // console.log(ctracker);
-      // function positionLoop() {
-			// 		requestAnimationFrame(positionLoop);
-			// 		var positions = ctracker.getCurrentPosition();
-			// 		// do something with the positions ...
-			// 		// print the positions
-			// 		var positionString = "";
-			// 		if (positions) {
-			// 			for (var p = 0;p < 10;p++) {
-			// 				positionString += "featurepoint "+p+" : ["+positions[p][0].toFixed(2)+","+positions[p][1].toFixed(2)+"]<br/>";
-			// 			}
-			// 			document.getElementById('positions').innerHTML = positionString;
-			// 		}
-			// 	}
-			// 	positionLoop();
+        if (!this.isShareDesk) {
+          var ctracker = new clm.tracker();
+          this.ctracker = ctracker;
+          this.ctracker.init();
+          this.ctracker.start(this.video);
+          // function positionLoop() {
+          //   requestAnimationFrame(() => {});
+          //   setTimeout(() => {
+          //     // requestAnimationFrame(positionLoop);
+          //     positionLoop();
+          //   }, 3000);
+          //   var positions = ctracker.getCurrentPosition();
+          //   if (positions) {
+          //     console.log("检测到了");
+          //   } else {
+          //     console.log("未响应");
+          //   }
+          // }
+          // positionLoop();
+        }
       }
 
       //这个函数的位置特别重要，
@@ -573,16 +598,17 @@ export default {
       //
       //setup connection
       this.conn();
-
       //btnStart.disabled = true;
       //btnCall.disabled = true;
       //btnHangup.disabled = true;
     },
     // 获取桌面视频流
     getDeskStream(stream) {
-      this.localVideo = document.getElementById("localvideo");
-      this.localVideo.srcObject = stream;
-      this.localStream = stream;
+      // console.log(stream);
+      // this.video = document.getElementById("video");
+      // console.log(this.video);
+      // this.video.srcObject = stream;
+      // this.localStream = stream;
       //自己添加
       this.getMediaStream(stream);
     },
@@ -599,27 +625,14 @@ export default {
           .catch(this.handleError);
         return true;
       } else {
-        alert("不是电脑不可以共享手机");
+        alert("不是电脑不可以共享");
       }
     },
     // 开始本地视频
     start() {
-      if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-        console.error("the getUserMedia is not supported!");
-        return;
-      } else {
-        if (this.isShareDesk && this.shareDesk()) {
-          this.constraints = {
+      setTimeout(() => {
+        this.constraints = {
             video: false,
-            audio: {
-              echoCancellation: true,
-              noiseSuppression: true,
-              autoGainControl: true,
-            },
-          };
-        } else {
-          this.constraints = {
-            video: { frameRate: { ideal: 30, max: 60 } },
             // audio:false,
             audio: {
               echoCancellation: true,
@@ -627,15 +640,46 @@ export default {
               autoGainControl: true,
             },
           };
-          if (typeof window.stream === "object") return;
-          clearTimeout(this.timeout);
-          this.timeout = setTimeout(() => {
-            clearTimeout(this.timeout);
-            navigator.mediaDevices
-              .getUserMedia(this.constraints)
-              .then(this.getMediaStream)
-              .catch(this.handleError);
-          }, 300);
+          navigator.mediaDevices
+            .getUserMedia(this.constraints)
+            .then(this.getMediaStream)
+            .catch(this.handleError);
+            console.log(123);
+      }, 2000);
+      if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+        console.error("the getUserMedia is not supported!");
+        return;
+      } else {
+        if (this.isShareDesk) {
+          this.shareDesk();
+          // this.constraints = {
+          //   video: false,
+          //   audio: {
+          //     echoCancellation: true,
+          //     noiseSuppression: true,
+          //     autoGainControl: true,
+          //   },
+          // };
+        } else {
+          const support = navigator.mediaDevices.getSupportedConstraints();
+          // console.log(support);
+          this.constraints = {
+            video: {
+              frameRate: { min: 15, ideal: 30, max: 60 },
+              width: { min: 640, ideal: 1280 },
+              height: { min: 480, ideal: 720 },
+            },
+            // audio:false,
+            audio: {
+              echoCancellation: true,
+              noiseSuppression: true,
+              autoGainControl: true,
+            },
+          };
+          navigator.mediaDevices
+            .getUserMedia(this.constraints)
+            .then(this.getMediaStream)
+            .catch(this.handleError);
         }
       }
     },
@@ -645,6 +689,7 @@ export default {
       // this.remoteStream = e.streams[0];
       this.remoteVideo = document.getElementById("remotevideo");
       this.remoteVideo.srcObject = e.streams[0];
+
       // remoteVideo.srcObject = e.streams[0];
     },
     handleOfferError(err) {
@@ -700,7 +745,7 @@ export default {
         };
         this.pc.ontrack = this.getRemoteStream;
       } else {
-        console.warning("the pc have be created!");
+        console.log("the pc have be created!");
       }
 
       return;
@@ -913,14 +958,5 @@ export default {
   position: relative;
   width: 50%;
   flex: 4;
-}
-#localvideo{
-  height: 200px;
-  width: auto;
-}
-#remotevideo{
-  height: 400px;
-  width: auto;
-
 }
 </style>
