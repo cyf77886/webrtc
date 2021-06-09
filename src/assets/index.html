@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>WebRTC Single</title>
+</head>
+
+<body>
+	<div>
+		<h2>请输入房间号</h2>
+		<form id="forma" action="./room.html" onsubmit="return checkchinese()">
+			<input name="roomid" type="post" id="roomid" required > yes <br>
+			<input type="submit" value="提交">
+		</form>
+	</div>
+	<!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.0.3/socket.io.js"></script> -->
+ <!-- <script src="https://webrtc.github.io/adapter/adapter-latest.js"></script> -->
+	<script type='text/javascript'>
+		function checkchinese() {
+			var reg = /[^\x00-\x80]/;
+			var x = document.getElementById("roomid").value;
+			console.log(x);
+			if (reg.test(x)) {
+				alert("房间号不可以为汉字!");
+				document.getElementById("roomid").focus();
+				document.getElementById("roomid").value = "";
+				return false;
+			}
+		}
+	</script>
+	<!-- <script src="js/main.js"></script> -->
+</body>
+
+</html>

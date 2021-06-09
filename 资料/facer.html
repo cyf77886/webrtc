@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<body>
+  <video id="webcam" width="400" height="300" autoplay loop></video>
+	<canvas id="overlay" width="400" height="300"></canvas>
+	<style>/*video和canvas标签位置重合使显示出来的人脸模型和视频重合*/
+        #webcam, #overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
+    </style>
+
+	<!-- 导入相关的js文件 -->
+  <!-- <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script> -->
+  <script typet="text/javascript" src="http://libs.baidu.com/jquery/1.9.1/jquery.min.js"></script>
+    <script src="./clmtrack.js"></script>
+    <script src="./main.js"></script>
+</body>
+</html>

@@ -1,7 +1,7 @@
 # webrtc-2
 
 > A Vue.js project
-
+>cli3 不行换成2了
 ## Build Setup
 
 ``` bash

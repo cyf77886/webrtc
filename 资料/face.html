@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<body>
+  <video id="video" width="400" height="300" autoplay loop playsinline webkit-playsinline style="position:absolute;left:50%;transform: translateX(-50%);">
+  </video>
+  <canvas id="drawCanvas" width="400" height="300" style="position:absolute;left:50%;transform: translateX(-50%);"></canvas>
+  <h4 id = "feedBack" style="text-align:center;">正在检测</h4>
+  <script src="./clmtrack.js"></script>
+  <script>
+  let video = document.getElementById(`video`)
+         ctracker = new clm.tracker(),
+             canvas = document.getElementById(`drawCanvas`),
+             canvasContext = canvas.getContext(`2d`),
+             feedBackText = document.getElementById(`feedBack`)
+             front = true
+         ctracker.init()
+         ctracker.start(video)
+  let cameraContext = navigator.mediaDevices.getUserMedia({
+         video: {
+             width: {
+                 min: 800,
+             },
+             height: {
+                 min: 600,
+             },
+             facingMode: (front ? `user` : `environment`),
+             frameRate: {
+                 ideal: 24,
+                 min: 12
+             }
+         },
+         audio: true
+         }).then(function (stream) {
+  try {
+                 video.srcObject = stream
+             } catch (error) {
+                 video.src = URL.createObjectURL(stream)
+             }
+             video.onloadedmetadata = function (e) {
+                 console.log(`捕获视频流`, stream.getVideoTracks())
+                 positionLoop()
+ 
+  function positionLoop() {
+                     requestAnimationFrame(positionLoop)
+  var positions = ctracker.getCurrentPosition()
+  if (positions) {
+                         canvas.style.display = `inline-block`
+                         feedBackText.textContent = `已检测到面部`
+                     } else {
+                         canvas.style.display = `none`
+                         feedBackText.textContent = `面部丢失`
+                     }
+                 }
+ 
+  function drawLoop() {
+                     requestAnimationFrame(drawLoop)
+                     canvasContext.clearRect(0, 0, canvas.width, canvas.height)
+                     ctracker.draw(canvas)
+                 }
+                 drawLoop()
+             }
+         }).catch(function (err) {
+             console.log(`失败`, err)
+         })
+  </script>
+</body>
+</html>
