@@ -2,6 +2,8 @@
   <div class="room">
     <div class="video-box" ref="video-box">
       <video class="video-mine" autoplay controls ref="video-mine"></video>
+
+      
       <!-- <video class="video-mine" autoplay controls ref="video-mine"></video> -->
     </div>
   </div>
