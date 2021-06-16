@@ -18,7 +18,7 @@ export default {
   },
   methods: {
     login() {
-      if(this.checkchinese&&this.pass==="52xx"){
+      if(this.checkchinese&&this.pass==="cycy"){
         this.$router.push({
           name: 'MyIndex',
             params: {
